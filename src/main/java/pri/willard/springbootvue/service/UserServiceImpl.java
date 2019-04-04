@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import pri.willard.springbootvue.entity.User;
+import pri.willard.springbootvue.exception.CustomException;
+import pri.willard.springbootvue.exception.ExceptionCode;
 import pri.willard.springbootvue.repository.UserRepository;
 
 /**
@@ -24,6 +26,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User register(String mobile, String password, String username) {
+		boolean exists = userRepository.existsByMobile(mobile);
+		if (exists) {
+			throw new CustomException(ExceptionCode.MOBILE_ALREADY_EXISTS, "该手机号已经注册");
+		}
+
 		User user = new User();
 		user.setCreateDate(LocalDateTime.now());
 		user.setUsername(username);
